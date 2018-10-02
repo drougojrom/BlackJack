@@ -1,10 +1,9 @@
 class Dealer
-  attr_accessor :name, :hand, :tally, :bank
+  attr_accessor :name, :hand, :bank
 
   def initalize(name)
     @name = name
     @hand = []
-    @tally = 0
     @bank = 100
   end
 
