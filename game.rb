@@ -42,7 +42,7 @@ class Game
   def game_result
     2.times do
       self.deck.give_card(player)
-      self.deck.deal_card(dealer, false)
+      self.deck.give_card(dealer, false)
     end
 
     dealer.hand.last.show
@@ -54,6 +54,7 @@ class Game
     take_skip = gets.chomp.downcase
     while take_skip != 's' do
       if take_skip == 't'
+        self.deck.give_card(player)
         player_total = player.calculate_total
         if player.lost?
           player.display_hand
@@ -72,7 +73,7 @@ class Game
     dealer.hand.first.show
 
     while dealer_total < DEALER_STOP do
-      self.deck.deal_card(dealer)
+      self.deck.give_card(dealer)
       dealer_total = dealer.calculate_total
       if dealer_total > BLACKJACK
         player.display_hand
@@ -82,7 +83,9 @@ class Game
       end
     end
 
+    puts 'Your cards: '
     player.display_hand
+    puts 'My cards: '
     dealer.display_hand
 
     if player_total > dealer_total

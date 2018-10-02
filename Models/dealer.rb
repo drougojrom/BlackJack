@@ -24,6 +24,7 @@ class Dealer
     ace_count.times do
       total -= 10 if total > Game::BLACKJACK
     end
+    return total
   end
 
   def blackjack?
