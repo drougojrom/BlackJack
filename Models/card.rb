@@ -14,7 +14,7 @@ class Card
     @hidden = !@hidden
   end
 
-  def card_value
+  def value
     case @face
     when "J", "Q", "K"
       value = 10
