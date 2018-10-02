@@ -1,3 +1,8 @@
+require_relative 'Models/player.rb'
+require_relative 'Models/dealer.rb'
+require_relative 'Models/card.rb'
+require_relative 'Models/deck.rb'
+
 class Game
 
   DEALER_STOP = 17
@@ -30,12 +35,13 @@ class Game
         break
       else
         puts 'Not a valid value'
+      end
     end
   end
 
   def game_result
     2.times do
-      self.deck.deal_card(player)
+      self.deck.give_card(player)
       self.deck.deal_card(dealer, false)
     end
 
