@@ -7,7 +7,7 @@ class Card
   end
 
   def open_card
-    !@hidden ? "#{@face} #{@suit} : the card was opened"
+    !@hidden ? "#{@face} #{@suit}" : "the card was opened"
   end
 
   def show

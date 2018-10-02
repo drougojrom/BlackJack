@@ -1,3 +1,8 @@
+require_relative 'Models/player.rb'
+require_relative 'Models/dealer.rb'
+require_relative 'Models/card.rb'
+require_relative 'Models/deck.rb'
+
 class Game
 
   DEALER_STOP = 17
@@ -30,13 +35,14 @@ class Game
         break
       else
         puts 'Not a valid value'
+      end
     end
   end
 
   def game_result
     2.times do
-      self.deck.deal_card(player)
-      self.deck.deal_card(dealer, false)
+      self.deck.give_card(player)
+      self.deck.give_card(dealer, false)
     end
 
     dealer.hand.last.show
@@ -44,53 +50,61 @@ class Game
     dealer_total = dealer.calculate_total
     check_for_blackjack(player, dealer)
     player.display_hand
-    puts 'Take another card or skip? T/S'
-    take_skip = gets.chomp.downcase
-    while take_skip != 's' do
-      if take_skip == 't'
-        player_total = player.calculate_total
-        if player.lost?
-          player.display_hand
-          dealer.display_hand
-          puts "Sorry, you've lost your 10$"
-          return -10
-        end
-      elsif take_skip != 's'
-        puts 'Select take or skip: t/s'
-      end
-      player.display_hand
+    if player.bank > 0 && dealer.bank > 0
       puts 'Take another card or skip? T/S'
-      take_skip = gets.chomp
-    end
-
-    dealer.hand.first.show
-
-    while dealer_total < DEALER_STOP do
-      self.deck.deal_card(dealer)
-      dealer_total = dealer.calculate_total
-      if dealer_total > BLACKJACK
+      take_skip = gets.chomp.downcase
+      while take_skip != 's' do
+        if take_skip == 't'
+          self.deck.give_card(player)
+          player_total = player.calculate_total
+          if player.lost?
+            display_cards(player, dealer)
+            puts "Sorry, you've lost your 10$"
+            return -10
+          end
+        elsif take_skip != 's'
+          puts 'Select take or skip: t/s'
+        end
         player.display_hand
-        dealer.display_hand
-        puts "Nice! I've just lost. You won 10$, #{player.name}!"
-        return 10
+        puts 'Take another card or skip? T/S'
+        take_skip = gets.chomp
       end
-    end
 
-    player.display_hand
-    dealer.display_hand
+      dealer.hand.first.show
 
-    if player_total > dealer_total
-      puts "Nice, you've won!"
-      return 10
-    elsif dealer_total > player_total
-      puts "Sorry, you've lost!"
-      return -10
+      while dealer_total < DEALER_STOP do
+        self.deck.give_card(dealer)
+        dealer_total = dealer.calculate_total
+        if dealer_total > BLACKJACK
+          display_cards(player, dealer)
+          puts "Nice! I've just lost. You won 10$, #{player.name}!"
+          return 10
+        end
+      end
+
+      display_cards(player, dealer)
+
+      if player_total > dealer_total
+        puts "Nice, you've won!"
+        return 10
+      elsif dealer_total > player_total
+        puts "Sorry, you've lost!"
+        return -10
+      else
+        puts "It's a tie!"
+      end
     else
-      puts "It's a tie!"
+      if player.bank == 0 
+        puts "You don't have enough money to play"
+      end
+      if delaer.bank == 0 
+        puts "Sorry, I'm out"
+      end
+      break
     end
   end
 
-  private
+private
 
   def check_for_blackjack(player, dealer)
     if player.blackjack?
@@ -106,5 +120,12 @@ class Game
       puts "Sorry, #{player.name}, you've lost your 10$."
       return -10
     end
+  end
+
+  def display_cards(player, dealer)
+    puts 'Your cards: '
+    player.display_hand
+    puts 'My cards: '
+    dealer.display_hand
   end
 end
