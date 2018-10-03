@@ -1,13 +1,16 @@
 class Card
 
+  attr_accessor :value
+
   def initialize(face, suit, hidden)
     @face = face
     @suit = suit
     @hidden = hidden
+    @value = 0
   end
 
   def open_card
-    !@hidden ? "#{@face} #{@suit}" : "the card was opened"
+    "#{@face} #{@suit}" 
   end
 
   def show
@@ -17,11 +20,11 @@ class Card
   def value
     case @face
     when "J", "Q", "K"
-      value = 10
+      @value = 10
     when 1
-      value = 11
+      @value = 11
     else
-      value = @face
+      @value = @face
     end
   end
 end
