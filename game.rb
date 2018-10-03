@@ -100,7 +100,7 @@ class Game
       if delaer.bank == 0 
         puts "Sorry, I'm out"
       end
-      break
+      return
     end
   end
 
