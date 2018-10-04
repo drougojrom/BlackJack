@@ -10,7 +10,13 @@ class GameInterface
       deck = Deck.new
       player.hand = []
       dealer.hand = []
-      {dealer: dealer, player: player, deck: deck}
+      player_total = 0
+      dealer_total = 0
+      {dealer: dealer,
+       player: player,
+       deck: deck,
+       player_total: player_total,
+       dealer_total: dealer_total}
     when 'n'
       return nil
     else

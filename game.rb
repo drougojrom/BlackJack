@@ -9,12 +9,14 @@ class Game
   DEALER_STOP = 17
   BLACKJACK = 21
 
-  attr_accessor :player, :dealer, :deck
+  attr_accessor :player, :dealer, :deck, :player_total, :dealer_total
 
   def initialize(player, dealer, deck)
     @player = player
     @dealer = dealer
     @deck = deck
+    @player_total = 0
+    @dealer_total = 0
   end
 
   def play
@@ -28,6 +30,8 @@ class Game
         @dealer = restarted_game[:dealer]
         @player = restarted_game[:player]
         @deck = restarted_game[:deck]
+        @player_total = restarted_game[:player_total]
+        @dealer_total = restarted_game[:dealer_total]
         result = game_result
         @dealer.bank -= result
         @player.bank += result
@@ -52,30 +56,11 @@ class Game
 
     take_skip = GameInterface.first_turn
 
-    if take_skip == 't' && @player.hand.length == 2
-      self.deck.give_card(@player)
-      player_total = @player.calculate_total
-      if @player.lost?
-        GameInterface.display_cards(@player, @dealer)
-        GameInterface.display_result(@player.name, false)
-        return -10
-      end
-    elsif take_skip != 's'
-      GameInterface.show_error
-      return 0
-    end
+    handle_player_turn(take_skip)
 
     check_for_blackjack
 
-    while dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
-      self.deck.give_card(@dealer)
-      dealer_total = @dealer.calculate_total
-      if dealer_total > BLACKJACK
-        GameInterface.display_cards(@player, @dealer)
-        GameInterface.display_result(@player.name, true)
-        return 10
-      end
-    end
+    handle_dealer_turn
 
     GameInterface.display_cards(@player, @dealer)
 
@@ -102,6 +87,33 @@ class Game
       @dealer.dispay_hand
       GameInterface.display_result(@player.name, false)
       return -10
+    end
+  end
+
+  def handle_player_turn(take_skip)
+    if take_skip == 't' && @player.hand.length == 2
+      self.deck.give_card(@player)
+      @player_total = @player.calculate_total
+      if @player.lost?
+        GameInterface.display_cards(@player, @dealer)
+        GameInterface.display_result(@player.name, false)
+        return -10
+      end
+    elsif take_skip != 's'
+      GameInterface.show_error
+      return 0
+    end
+  end
+
+  def handle_dealer_turn
+    while @dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
+      self.deck.give_card(@dealer)
+      @dealer_total = @dealer.calculate_total
+      if dealer_total > BLACKJACK
+        GameInterface.display_cards(@player, @dealer)
+        GameInterface.display_result(@player.name, true)
+        return 10
+      end
     end
   end
 end
