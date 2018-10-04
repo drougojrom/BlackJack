@@ -2,6 +2,7 @@ require_relative 'Models/player.rb'
 require_relative 'Models/dealer.rb'
 require_relative 'Models/card.rb'
 require_relative 'Models/deck.rb'
+require_relative 'game_interface.rb'
 
 class Game
 
@@ -22,25 +23,10 @@ class Game
     @player.bank += result
 
     loop do
-      puts 'Do you want to play? y/n'
-      continue = gets.chomp
-      puts "#{@player.name} has #{@player.bank}$"
-      puts "Dealer has #{@dealer.bank}$"
-      case continue
-      when 'y'
-        if @player.bank > 0 && @dealer.bank > 0 
-          @deck = Deck.new
-          @player.hand = []
-          @dealer.hand = []
-          result = game_result
-          @dealer.bank -= result
-          @player.bank += result
-        end
-      when 'n'
-        break
-      else
-        puts 'Not a valid value'
-      end
+      break unless restarted_game = GameInterface.start_game?(@player, @dealer)
+      @dealer = restarted_game[:dealer]
+      @player = restarted_game[:player]
+      @deck = restarted_game[:deck]
     end
   end
 
