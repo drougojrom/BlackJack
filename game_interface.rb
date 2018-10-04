@@ -1,4 +1,5 @@
 class GameInterface
+
   def self.start_game?(player, dealer)
     puts 'Do you want to play? y/n'
     continue = gets.chomp
@@ -6,12 +7,10 @@ class GameInterface
     puts "Dealer has #{dealer.bank}$"
     case continue
     when 'y'
-      if player.bank > 0 && dealer.bank > 0
-        deck = Deck.new
-        player.hand = []
-        dealer.hand = []
-        {dealer: dealer, player: player, deck: deck}
-      end
+      deck = Deck.new
+      player.hand = []
+      dealer.hand = []
+      {dealer: dealer, player: player, deck: deck}
     when 'n'
       return nil
     else
@@ -19,7 +18,31 @@ class GameInterface
     end
   end
 
-  def self.result(player, dealer)
+  def self.first_turn
+    puts 'Take another card or skip? T/S'
+    take_skip = gets.chomp.downcase
+  end
 
+  def self.display_cards(player, dealer)
+    puts 'Your cards: '
+    player.display_hand
+    puts ''
+    puts 'My cards: '
+    dealer.display_hand
+  end
+
+  def self.display_result(player_name, result)
+    case result
+    when true
+      puts "Nice! I've just lost. You won 10$, #{player_name}!"
+    when false
+      puts "Sorry, you've lost your 10$"
+    else
+      puts "It's a tie!"
+    end
+  end
+
+  def self.show_error
+    puts 'Select take or skip'
   end
 end

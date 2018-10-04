@@ -23,12 +23,21 @@ class Game
     @player.bank += result
 
     loop do
-      break unless restarted_game = GameInterface.start_game?(@player, @dealer)
-      @dealer = restarted_game[:dealer]
-      @player = restarted_game[:player]
-      @deck = restarted_game[:deck]
+      if @player.bank > 0 && @dealer.bank > 0
+        break unless restarted_game = GameInterface.start_game?(@player, @dealer)
+        @dealer = restarted_game[:dealer]
+        @player = restarted_game[:player]
+        @deck = restarted_game[:deck]
+        result = game_result
+        @dealer.bank -= result
+        @player.bank += result
+      else
+        break
+      end
     end
   end
+
+  private
 
   def game_result
     2.times do
@@ -41,66 +50,58 @@ class Game
 
     @player.display_hand
 
-    puts 'Take another card or skip? T/S'
-    take_skip = gets.chomp.downcase
-    if take_skip == 't' && @player.hand.length < 4
+    take_skip = GameInterface.first_turn
+
+    if take_skip == 't' && @player.hand.length == 2
       self.deck.give_card(@player)
       player_total = @player.calculate_total
       if @player.lost?
-        display_cards
-        puts "Sorry, you've lost your 10$"
+        GameInterface.display_cards(@player, @dealer)
+        GameInterface.display_result(@player.name, false)
         return -10
       end
     elsif take_skip != 's'
-      puts 'Select take or skip: t/s'
+      GameInterface.show_error
+      return 0
     end
 
     check_for_blackjack
 
-    while dealer_total < DEALER_STOP && @dealer.hand.length < 4 do
+    while dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
       self.deck.give_card(@dealer)
       dealer_total = @dealer.calculate_total
       if dealer_total > BLACKJACK
-        display_cards
-        puts "Nice! I've just lost. You won 10$, #{@player.name}!"
+        GameInterface.display_cards(@player, @dealer)
+        GameInterface.display_result(@player.name, true)
         return 10
       end
     end
 
-    display_cards
+    GameInterface.display_cards(@player, @dealer)
 
     if player_total > dealer_total
-      puts "Nice, you've won!"
+      GameInterface.display_result(@player.name, true)
       return 10
     elsif dealer_total > player_total
-      puts "Sorry, you've lost!"
+      GameInterface.display_result(@player.name, false)
       return -10
     else
-      puts "It's a tie!"
+      GameInterface.display_result(@player.name, nil)
     end
   end
-
-private
 
   def check_for_blackjack
     if @player.blackjack?
       @player.display_hand
       @dealer.display_hand
-      puts "Congratulations, #{@player.name}! You've earned 10$!"
+      GameInterface.display_result(@player.name, true)
       return 10
     end
     if @dealer.blackjack?
       @player.display_hand
       @dealer.dispay_hand
-      puts "Sorry, #{@player.name}, you've lost your 10$."
+      GameInterface.display_result(@player.name, false)
       return -10
     end
-  end
-
-  def display_cards
-    puts 'Your cards: '
-    @player.display_hand
-    puts 'My cards: '
-    @dealer.display_hand
   end
 end
