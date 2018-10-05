@@ -11,20 +11,16 @@ class Game
 
   attr_accessor :player, :dealer, :deck, :player_total, :dealer_total
 
-  def initialize(player, dealer, deck)
+  def initialize(player)
     @player = player
-    @dealer = dealer
+    @dealer = Dealer.new 'Dealer'
   end
 
   def play
     loop do
       break if @player.bank == 0 || @dealer.bank == 0
       break unless restarted_game = GameInterface.start_game?(@player, @dealer)
-      @dealer.hand = []
-      @player.hand = []
-      @deck = Deck.new
-      @player_total = 0
-      @dealer_total = 0
+      restart_game
       result = game_result
       @dealer.bank -= result
       @player.bank += result
@@ -33,19 +29,28 @@ class Game
 
 private
 
+  def restart_game
+    @dealer.hand = []
+    @player.hand = []
+    @deck = Deck.new
+    @player_total = 0
+    @dealer_total = 0
+  end
+
   def game_result
     2.times do
-      self.deck.give_card(@player)
-      self.deck.give_card(@dealer, false)
+      @deck.give_card(@player)
+      @deck.give_card(@dealer, false)
     end
+
+    @player.display_hand
+    @dealer.display_hand
 
     @player_total = player.calculate_total
     @dealer_total = dealer.calculate_total
 
-    loop do
-      take_skip = GameInterface.first_turn
-      handle_player_turn(take_skip)
-    end
+    player_choice = GameInterface.first_turn
+    handle_player_turn(player_choice)
 
     if blackjack = check_for_blackjack
       handle_result(@player.name, blackjack)
@@ -81,7 +86,15 @@ private
     end
   end
 
-  def handle_player_turn(take_skip)
+  def handle_player_turn(player_choice)
+    case player_choice
+    when 1
+      @deck.give_card(@player)
+      @player_total = @player.calculate_total
+
+    when 2
+    when 3
+    end
     if take_skip == 't' && @player.hand.length == 2
       self.deck.give_card(@player)
       @player_total = @player.calculate_total

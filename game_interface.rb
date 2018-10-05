@@ -16,8 +16,11 @@ class GameInterface
   end
 
   def self.first_turn
-    puts 'Take another card, pass or show hand? T/P/S'
-    take_skip = gets.chomp.downcase
+    puts 'Take another card, pass or open hand? T/P/O'
+    puts 'Take - 1'
+    puts 'Pass - 2'
+    puts 'Open - 3'
+    take_skip = gets.to_i
     take_skip
   end
 

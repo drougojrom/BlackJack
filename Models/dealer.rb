@@ -8,6 +8,7 @@ class Dealer
   end
 
   def display_hand
+    puts ''
     puts "#{self.name} has the following cards: "
     @hand.each do |card|
       puts card.open_card
