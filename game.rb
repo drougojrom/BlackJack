@@ -27,7 +27,7 @@ class Game
     end
   end
 
-private
+  private
 
   def restart_game
     @dealer.hand = []
@@ -45,8 +45,10 @@ private
 
     @player.display_hand
 
-    @player_total = player.calculate_total
-    @dealer_total = dealer.calculate_total
+    @player_total = @player.calculate_total
+    @dealer_total = @dealer.calculate_total
+
+    GameInterface.display_total(@player_total)
 
     player_choice = GameInterface.first_turn
     handle_player_turn(player_choice)
@@ -65,6 +67,10 @@ private
     @dealer.display_hand
   end
 
+  def display_total
+    GameInterface.display_total(@player_total, @dealer_total)
+  end
+
   def handle_end_game
     if @player_total > @dealer_total
       return handle_result(@player.name, true)
@@ -77,6 +83,7 @@ private
 
   def handle_result(name, win)
     display_cards
+    display_total
     GameInterface.display_result(name, win)
     return win ? 10 : -10
   end

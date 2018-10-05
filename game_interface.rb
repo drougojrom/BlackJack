@@ -45,6 +45,12 @@ class GameInterface
     end
   end
 
+  def self.display_total(player_total, dealer_total = nil)
+    puts "Player's total is #{player_total}"
+    puts ''
+    puts "Dealer's total is #{dealer_total}" unless dealer_total.nil?
+  end
+
   def self.show_error
     puts 'Select take or skip'
   end
