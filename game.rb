@@ -67,6 +67,7 @@ private
     elsif @player.calculate_total < @dealer.calculate_total
       handle_result(@player.name, false)
     else
+      handle_result(@player.name, nil)
       GameInterface.display_result(@player.name)
     end
   end
@@ -77,16 +78,6 @@ private
     unless win.nil?
       GameInterface.display_result(name, win)
       return win ? 10 : -10
-    end
-  end
-
-  def check_for_blackjack
-    if @player.blackjack?
-      return true
-    elsif @dealer.blackjack?
-      return false
-    else
-      return nil
     end
   end
 
