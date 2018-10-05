@@ -26,11 +26,11 @@ class GameInterface
 
   def self.display_cards(player, dealer = nil)
     puts 'Your cards: '
-    player.display_hand
+    display_hand(player.name, player.hand)
     puts ''
     if dealer
       puts 'My cards: '
-      dealer.display_hand
+      display_hand(dealer.name, dealer.hand)
     end
   end
 
@@ -53,5 +53,15 @@ class GameInterface
 
   def self.show_error
     puts 'Select take or skip'
+  end
+
+private
+
+  def display_hand(name, hand)
+    puts ''
+    puts "#{name} has the following cards: "
+    hand.each do |card|
+      puts card.open_card
+    end
   end
 end

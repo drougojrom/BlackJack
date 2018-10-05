@@ -21,13 +21,14 @@ class Game
       break if @player.bank == 0 || @dealer.bank == 0
       break unless GameInterface.start_game?(@player, @dealer)
       restart_game
-      result = game_result
-      @dealer.bank -= result
-      @player.bank += result
+      if result = game_result
+        @dealer.bank -= result
+        @player.bank += result
+      end
     end
   end
 
-  private
+private
 
   def restart_game
     @dealer.hand = []
@@ -45,8 +46,7 @@ class Game
 
     @player.display_hand
 
-    @player_total = @player.calculate_total
-    @dealer_total = @dealer.calculate_total
+    calculate_total
 
     GameInterface.display_total(@player_total)
 
@@ -60,6 +60,11 @@ class Game
     handle_dealer_turn
 
     handle_end_game
+  end
+
+  def calculate_total
+    @player_total = @player.calculate_total
+    @dealer_total = @dealer.calculate_total
   end
 
   def display_cards
@@ -82,6 +87,7 @@ class Game
   end
 
   def handle_result(name, win)
+    calculate_total
     display_cards
     display_total
     GameInterface.display_result(name, win)
@@ -102,6 +108,7 @@ class Game
     case player_choice
     when 1
       @deck.give_card(@player)
+      calculate_total
       if @player.lost?
         handle_result(@player.name, false)
       end
@@ -113,7 +120,7 @@ class Game
   end
 
   def handle_dealer_turn
-    while @dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
+    while @dealer_total < DEALER_STOP && @dealer.hand.length < 3 do
       @deck.give_card(@dealer)
       if @dealer.lost?
         handle_result(@player.name, true)
