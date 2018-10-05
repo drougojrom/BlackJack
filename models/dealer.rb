@@ -7,11 +7,18 @@ class Dealer
     @bank = 100
   end
 
-  def display_hand
+  def display_hand(show = nil)
     puts ''
     puts "#{self.name} has the following cards: "
-    @hand.each do |card|
-      puts card.open_card
+    if name != 'Dealer' || show
+      @hand.each do |card|
+        puts card.open_card
+      end
+    else 
+      puts "Dealer's card: "
+      @hand.each do |card|
+        puts '*'
+      end
     end
   end
 
@@ -25,7 +32,7 @@ class Dealer
     ace_count.times do
       total -= 10 if total > Game::BLACKJACK
     end
-    return total
+    total
   end
 
   def blackjack?

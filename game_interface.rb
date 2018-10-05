@@ -34,7 +34,7 @@ class GameInterface
     end
   end
 
-  def self.display_result(player_name, result)
+  def self.display_result(player_name, result = nil)
     case result
     when true
       puts "Nice! I've just lost. You won 10$, #{player_name}!"
