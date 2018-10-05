@@ -1,7 +1,7 @@
-require_relative 'Models/player.rb'
-require_relative 'Models/dealer.rb'
-require_relative 'Models/card.rb'
-require_relative 'Models/deck.rb'
+require_relative 'models/player.rb'
+require_relative 'models/dealer.rb'
+require_relative 'models/card.rb'
+require_relative 'models/deck.rb'
 require_relative 'game_interface.rb'
 
 class Game
