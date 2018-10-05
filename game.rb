@@ -19,7 +19,7 @@ class Game
   def play
     loop do
       break if @player.bank == 0 || @dealer.bank == 0
-      break unless restarted_game = GameInterface.start_game?(@player, @dealer)
+      break unless GameInterface.start_game?(@player, @dealer)
       restart_game
       result = game_result
       @dealer.bank -= result
@@ -44,7 +44,6 @@ private
     end
 
     @player.display_hand
-    @dealer.display_hand
 
     @player_total = player.calculate_total
     @dealer_total = dealer.calculate_total
@@ -61,6 +60,11 @@ private
     handle_end_game
   end
 
+  def display_cards
+    @player.display_hand
+    @dealer.display_hand
+  end
+
   def handle_end_game
     if @player_total > @dealer_total
       return handle_result(@player.name, true)
@@ -72,6 +76,7 @@ private
   end
 
   def handle_result(name, win)
+    display_cards
     GameInterface.display_result(name, win)
     return win ? 10 : -10
   end
@@ -91,30 +96,24 @@ private
     when 1
       @deck.give_card(@player)
       @player_total = @player.calculate_total
-
-    when 2
-    when 3
-    end
-    if take_skip == 't' && @player.hand.length == 2
-      self.deck.give_card(@player)
-      @player_total = @player.calculate_total
       if @player.lost?
         GameInterface.display_cards(@player, @dealer)
-        return handle_result(@player.name, false)
+        handle_result(@player.name, false)
       end
-    elsif take_skip == 's'
-      GameInterface.display_cards(@player)
-    elsif take_skip == 'p'
+    when 2
+      handle_dealer_turn
+    when 3
+      display_cards
     end
   end
 
   def handle_dealer_turn
     while @dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
-      self.deck.give_card(@dealer)
+      @deck.give_card(@dealer)
       @dealer_total = @dealer.calculate_total
       if dealer_total > BLACKJACK
         GameInterface.display_cards(@player, @dealer)
-        return handle_result(@player.name, true)
+        handle_result(@player.name, true)
       end
     end
   end
