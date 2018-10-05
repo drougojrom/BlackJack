@@ -29,10 +29,10 @@ class Dealer
   end
 
   def blackjack?
-    self.calculate_total == Game::BLACKJACK
+    calculate_total == Game::BLACKJACK
   end
 
   def lost?
-    self.calculate_total > Game::BLACKJACK
+    calculate_total > Game::BLACKJACK
   end
 end

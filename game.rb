@@ -102,9 +102,7 @@ class Game
     case player_choice
     when 1
       @deck.give_card(@player)
-      @player_total = @player.calculate_total
       if @player.lost?
-        GameInterface.display_cards(@player, @dealer)
         handle_result(@player.name, false)
       end
     when 2
@@ -117,9 +115,7 @@ class Game
   def handle_dealer_turn
     while @dealer_total < DEALER_STOP && @dealer.hand.length == 2 do
       @deck.give_card(@dealer)
-      @dealer_total = @dealer.calculate_total
-      if dealer_total > BLACKJACK
-        GameInterface.display_cards(@player, @dealer)
+      if @dealer.lost?
         handle_result(@player.name, true)
       end
     end
