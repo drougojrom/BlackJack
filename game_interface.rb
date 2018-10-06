@@ -1,7 +1,7 @@
 class GameInterface
 
   def self.start_game?(player, dealer)
-    puts 'Do you want to play? Y - 1; N - 2'
+    puts 'Do you want to play again? Y - 1; N - 2'
     choice = gets.to_i
     case choice
     when 1
@@ -11,7 +11,7 @@ class GameInterface
     when 2
       false
     else
-      puts 'not a valid value'
+      self.show_error 'not a valid value'
       nil
     end
   end
@@ -22,7 +22,13 @@ class GameInterface
     puts 'Pass - 2'
     puts 'Open - 3'
     take_skip = gets.to_i
-    take_skip
+    case take_skip
+    when 1, 2, 3
+      take_skip
+    else
+      self.show_error 'Not valid choice, try again'
+      self.first_turn
+    end
   end
 
   def self.display_cards(player, show = nil)

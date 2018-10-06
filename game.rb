@@ -17,6 +17,8 @@ class Game
   end
 
   def play
+    restart_game
+    game_result
     loop do
       break if @player.bank == 0 || @dealer.bank == 0
       start_game = GameInterface.start_game?(@player, @dealer)
@@ -61,17 +63,17 @@ private
   end
 
   def determine_winner
-    player_win = nil
+    player_result = nil
     if @player.blackjack? || @dealer.lost?
-      player_win = true
+      player_result = true
     elsif @dealer.blackjack? || @player.lost?
-      player_win = false
+      player_result = false
     elsif @player.calculate_total > @dealer.calculate_total
-      player_win = true
+      player_result = true
     elsif @player.calculate_total < @dealer.calculate_total
-      player_win = false
+      player_result = false
     end
-    handle_result(@player.name, player_win)
+    handle_result(@player.name, player_result)
   end
 
   def handle_result(name, win)
