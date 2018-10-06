@@ -23,10 +23,7 @@ class Game
       case start_game
       when true
         restart_game
-        if result = game_result
-          @dealer.bank -= result
-          @player.bank += result
-        end
+        game_result
       when false
         break
       when nil
@@ -72,7 +69,7 @@ private
     elsif @player.calculate_total > @dealer.calculate_total
       player_win = true
     elsif @player.calculate_total < @dealer.calculate_total
-       player_win = false
+      player_win = false
     else
       player_win = nil
     end
@@ -84,7 +81,9 @@ private
     display_total
     GameInterface.display_result(name, win)
     unless win.nil?
-      return win ? 10 : -10
+      bank_value = win ? 10 : -10
+      @dealer.bank -= bank_value
+      @player.bank += bank_value
     end
   end
 
