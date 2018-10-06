@@ -61,7 +61,7 @@ private
   end
 
   def determine_winner
-    player_win = false
+    player_win = nil
     if @player.blackjack? || @dealer.lost?
       player_win = true
     elsif @dealer.blackjack? || @player.lost?
@@ -70,8 +70,6 @@ private
       player_win = true
     elsif @player.calculate_total < @dealer.calculate_total
       player_win = false
-    else
-      player_win = nil
     end
     handle_result(@player.name, player_win)
   end
@@ -91,11 +89,11 @@ private
     case player_choice
     when 1
       @deck.give_card(@player)
-      determine_winner
+      handle_result(@player.name, false) if @player.lost?
+      handle_dealer_turn
     when 2
       handle_dealer_turn
     when 3
-      display_cards
       determine_winner
     else
       GameInterface.show_error('Not a valid choice, the game will abort')
