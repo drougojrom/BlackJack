@@ -14,17 +14,23 @@ class Game
   def initialize(player)
     @player = player
     @dealer = Dealer.new 'Dealer'
-    @deck = Deck.new
   end
 
   def play
     loop do
       break if @player.bank == 0 || @dealer.bank == 0
-      break unless GameInterface.start_game?(@player, @dealer)
-      restart_game
-      if result = game_result
-        @dealer.bank -= result
-        @player.bank += result
+      start_game = GameInterface.start_game?(@player, @dealer)
+      case start_game
+      when true
+        restart_game
+        if result = game_result
+          @dealer.bank -= result
+          @player.bank += result
+        end
+      when false
+        break
+      when nil
+        next
       end
     end
   end
@@ -49,8 +55,8 @@ private
   end
 
   def display_cards(show = nil)
-    @player.display_hand
-    @dealer.display_hand(show)
+    GameInterface.display_cards(@player)
+    GameInterface.display_cards(@dealer, show)
   end
 
   def display_total
@@ -58,25 +64,26 @@ private
   end
 
   def determine_winner
+    player_win = false
     if @player.blackjack? || @dealer.lost?
-      handle_result(@player.name, true)
+      player_win = true
     elsif @dealer.blackjack? || @player.lost?
-      handle_result(@player.name, false)
+      player_win = false
     elsif @player.calculate_total > @dealer.calculate_total
-      handle_result(@player.name, true)
+      player_win = true
     elsif @player.calculate_total < @dealer.calculate_total
-      handle_result(@player.name, false)
+       player_win = false
     else
-      handle_result(@player.name, nil)
-      GameInterface.display_result(@player.name)
+      player_win = nil
     end
+    handle_result(@player.name, player_win)
   end
 
   def handle_result(name, win)
     display_cards(true)
     display_total
+    GameInterface.display_result(name, win)
     unless win.nil?
-      GameInterface.display_result(name, win)
       return win ? 10 : -10
     end
   end
@@ -91,6 +98,8 @@ private
     when 3
       display_cards
       determine_winner
+    else
+      GameInterface.show_error('Not a valid choice, the game will abort')
     end
   end
 

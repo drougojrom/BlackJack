@@ -7,21 +7,6 @@ class Dealer
     @bank = 100
   end
 
-  def display_hand(show = nil)
-    puts ''
-    puts "#{self.name} has the following cards: "
-    if name != 'Dealer' || show
-      @hand.each do |card|
-        puts card.open_card
-      end
-    else 
-      puts "Dealer's card: "
-      @hand.each do |card|
-        puts '*'
-      end
-    end
-  end
-
   def calculate_total
     total = 0
     ace_count = 0
