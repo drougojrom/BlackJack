@@ -20,7 +20,7 @@ class GameInterface
   end
 
   def self.player_choice(state = nil)
-    puts 'Take another card, pass or open hand? T/P/O'
+    puts 'Select one of the options'
     puts 'Take - 1'
     puts 'Pass - 2' unless state == :pass
     puts 'Open - 3'
@@ -33,10 +33,11 @@ class GameInterface
         take_skip
       else
         self.show_error 'Not valid'
+        self.player_choice(:pass)      
       end
     else
       self.show_error 'Not valid choice, try again'
-      self.player_choice
+      self.player_choice(state)
     end
   end
 
