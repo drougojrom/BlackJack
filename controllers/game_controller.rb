@@ -23,20 +23,20 @@ class GameController
     loop do
       restart_game
       result
-      break if @player.bank == 0 || @dealer.bank == 0      
+      break if player.bank == 0 || dealer.bank == 0      
       break unless GameInterface.restart_game?
-      GameInterface.players_stats(@player, @dealer)
+      GameInterface.players_stats(player, dealer)
     end
   end
 
 private
 
   def name
-    @player.name
+    player.name
   end
 
   def state
-    @player.state
+    player.state
   end
 
   def restart_game
@@ -45,8 +45,8 @@ private
     player.update_state(0)
     @deck = Deck.new
     2.times do
-      @deck.give_card(@player)
-      @deck.give_card(@dealer, false)
+      deck.give_card(player)
+      deck.give_card(dealer, false)
     end
   end
 
@@ -72,9 +72,9 @@ private
     player.update_state(player_choice)
     case state
     when :take_card
-      @deck.give_card(player)
+      deck.give_card(player)
       if player.lost?
-        handle_result(name, false) if player.lost?
+        player.update_state(3)
         return
       end
     else
@@ -88,7 +88,7 @@ private
 
   def handle_dealer_turn
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
-      @deck.give_card(dealer)
+      deck.give_card(dealer)
     end
   end
 end
