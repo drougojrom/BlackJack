@@ -1,4 +1,8 @@
+require_relative '../modules/state_machine.rb'
+
 class Dealer
+  include StateMachine
+
   attr_accessor :name, :hand, :bank
 
   def initialize(name)
@@ -15,16 +19,16 @@ class Dealer
       ace_count += 1 if card.value == 11
     end
     ace_count.times do
-      total -= 10 if total > Game::BLACKJACK
+      total -= 10 if total > GameController::BLACKJACK
     end
     total
   end
 
   def blackjack?
-    calculate_total == Game::BLACKJACK
+    calculate_total == GameController::BLACKJACK
   end
 
   def lost?
-    calculate_total > Game::BLACKJACK
+    calculate_total > GameController::BLACKJACK
   end
 end

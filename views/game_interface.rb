@@ -1,12 +1,15 @@
 class GameInterface
 
-  def self.start_game?(player, dealer)
+  def self.players_stats(player, dealer)
+    puts "#{player.name} has #{player.bank}$"
+    puts "Dealer has #{dealer.bank}$"
+  end
+
+  def self.restart_game?
     puts 'Do you want to play again? Y - 1; N - 2'
     choice = gets.to_i
     case choice
     when 1
-      puts "#{player.name} has #{player.bank}$"
-      puts "Dealer has #{dealer.bank}$"
       true
     when 2
       false
@@ -16,18 +19,24 @@ class GameInterface
     end
   end
 
-  def self.first_turn
+  def self.player_choice(state = nil)
     puts 'Take another card, pass or open hand? T/P/O'
     puts 'Take - 1'
-    puts 'Pass - 2'
+    puts 'Pass - 2' unless state == :pass
     puts 'Open - 3'
     take_skip = gets.to_i
     case take_skip
-    when 1, 2, 3
+    when 1, 3
       take_skip
+    when 2
+      if state != :pass
+        take_skip
+      else
+        self.show_error 'Not valid'
+      end
     else
       self.show_error 'Not valid choice, try again'
-      self.first_turn
+      self.player_choice
     end
   end
 
