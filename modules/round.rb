@@ -1,7 +1,9 @@
 module Round
   def determine_winner
-     player_result = nil
-    if player.blackjack? || dealer.lost?
+    player_result = nil
+    if player.calculate_total == dealer.calculate_total
+      player_result = nil
+    elsif player.blackjack? || dealer.lost?
       player_result = true
     elsif dealer.blackjack? || player.lost?
       player_result = false
@@ -13,7 +15,7 @@ module Round
     player_result
   end
 
-  def handle_result(name, win)
+  def result(name, win)
     display_cards(true)
     display_total
     GameInterface.display_result(name, win)
@@ -21,6 +23,17 @@ module Round
       bank_value = win ? 10 : -10
       dealer.bank -= bank_value
       player.bank += bank_value
+    end
+  end
+
+  def reset
+    dealer.hand = []
+    player.hand = []
+    player.update_state(0)
+    @deck = Deck.new
+    2.times do
+      deck.give_card(player)
+      deck.give_card(dealer, false)
     end
   end
 end

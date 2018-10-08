@@ -20,13 +20,20 @@ class GameController
   end
 
   def start
+    reset
     loop do
-      restart_game
-      result
-      break if player.bank == 0 || dealer.bank == 0      
-      break unless GameInterface.restart_game?
-      GameInterface.players_stats(player, dealer)
+      display_cards
+      GameInterface.display_total(player.calculate_total)
+      choice = GameInterface.player_choice(state)
+      player_turn(choice)
+      break if state == :open
+      dealer_turn unless dealer.state == :card_taken
+      break unless state == :pass
     end
+    result(name, determine_winner)
+    return if player.bank == 0 || dealer.bank == 0  
+    GameInterface.players_stats(player, dealer)
+    start if GameInterface.restart_game?
   end
 
 private
@@ -39,36 +46,16 @@ private
     player.state
   end
 
-  def restart_game
-    dealer.hand = []
-    player.hand = []
-    player.update_state(0)
-    @deck = Deck.new
-    2.times do
-      deck.give_card(player)
-      deck.give_card(dealer, false)
-    end
-  end
-
-  def result
-    loop do
-      display_cards
-      GameInterface.display_total(player.calculate_total)
-      choice = GameInterface.player_choice(state)
-      handle_player_turn(choice)
-      break if state == :open
-      handle_dealer_turn
-      break unless state == :pass
-    end
-    handle_result(name, determine_winner)
-  end
-
   def display_cards(show = nil)
     GameInterface.display_cards(player)
     GameInterface.display_cards(dealer, show)
   end
 
-  def handle_player_turn(player_choice)
+  def display_total
+    GameInterface.display_total(player.calculate_total, dealer.calculate_total)
+  end
+
+  def player_turn(player_choice)
     player.update_state(player_choice)
     case state
     when :take_card
@@ -82,12 +69,9 @@ private
     end
   end
 
-  def display_total
-    GameInterface.display_total(player.calculate_total, dealer.calculate_total)
-  end
-
-  def handle_dealer_turn
+  def dealer_turn
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
+      dealer.update_state(1)
       deck.give_card(dealer)
     end
   end

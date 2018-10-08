@@ -6,5 +6,5 @@ puts "If you don't mind me asking, what's your name?"
 name = gets.chomp
 puts "Nice to meet you, #{name}! Let's get started."
 player = Player.new name
-game = GameController.new(player)
-game.start
+game_controller = GameController.new player
+game_controller.start
