@@ -29,7 +29,8 @@ module Round
   def reset
     dealer.hand = []
     player.hand = []
-    player.update_state(0)
+    player.update_choice(0)
+    dealer.update_choice(0)
     @deck = Deck.new
     2.times do
       deck.give_card(player)

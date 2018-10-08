@@ -4,13 +4,13 @@ module StateMachine
   end
 
   module InstanceMethods
-    attr_accessor :state
-    def update_state(state)
-      updated_state = StateMachine::STATES[state]
-      @state = updated_state unless updated_state.nil?
+    attr_accessor :choice
+    def update_choice(choice)
+      updated_choice = StateMachine::CHOICES[choice]
+      @choice = updated_choice unless updated_choice.nil?
     end
   end
 
 private
-  STATES = [:nd, :take_card, :pass, :open]
+  CHOICES = [:nd, :take_card, :pass, :open]
 end

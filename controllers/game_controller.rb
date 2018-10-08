@@ -24,11 +24,11 @@ class GameController
     loop do
       display_cards
       GameInterface.display_total(player.calculate_total)
-      choice = GameInterface.player_choice(state)
+      choice = GameInterface.player_choice(player_choice)
       player_turn(choice)
-      break if state == :open
-      dealer_turn unless dealer.state == :card_taken
-      break unless state == :pass
+      break if player_choice == :open
+      dealer_turn unless dealer.choice == :card_taken
+      break unless player_choice == :pass
     end
     result(name, determine_winner)
     return if player.bank == 0 || dealer.bank == 0  
@@ -42,8 +42,8 @@ private
     player.name
   end
 
-  def state
-    player.state
+  def player_choice
+    player.choice
   end
 
   def display_cards(show = nil)
@@ -55,13 +55,13 @@ private
     GameInterface.display_total(player.calculate_total, dealer.calculate_total)
   end
 
-  def player_turn(player_choice)
-    player.update_state(player_choice)
-    case state
+  def player_turn(choice)
+    player.update_choice(choice)
+    case player_choice
     when :take_card
       deck.give_card(player)
       if player.lost?
-        player.update_state(3)
+        player.update_choice(3)
         return
       end
     else
@@ -71,7 +71,7 @@ private
 
   def dealer_turn
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
-      dealer.update_state(1)
+      dealer.update_choice(1)
       deck.give_card(dealer)
     end
   end
