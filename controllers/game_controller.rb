@@ -23,7 +23,7 @@ class GameController
     reset
     loop do
       display_cards
-      GameInterface.display_total(player.calculate_total)
+      GameInterface.display_total(player.total)
       choice = GameInterface.player_choice(player_choice)
       player_turn(choice)
       break if player_choice == :open
@@ -52,7 +52,7 @@ private
   end
 
   def display_total
-    GameInterface.display_total(player.calculate_total, dealer.calculate_total)
+    GameInterface.display_total(player.total, dealer.total)
   end
 
   def player_turn(choice)
@@ -60,6 +60,7 @@ private
     case player_choice
     when :take_card
       deck.give_card(player)
+      player.calculate_total
       if player.lost?
         player.update_choice(3)
         return
@@ -73,6 +74,7 @@ private
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
       dealer.update_choice(1)
       deck.give_card(dealer)
+      dealer.calculate_total
     end
   end
 end
