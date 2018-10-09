@@ -1,7 +1,4 @@
-require_relative '../modules/state_machine.rb'
-
 class Dealer
-  include StateMachine
 
   attr_accessor :name, :hand, :bank, :total
 

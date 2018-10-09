@@ -19,25 +19,25 @@ class GameInterface
     end
   end
 
-  def self.player_choice(state = nil)
+  def self.player_choice(choice = nil)
     puts 'Select one of the options'
     puts 'Take - 1'
-    puts 'Pass - 2' unless state == :pass
+    puts 'Pass - 2' if choice.nil?
     puts 'Open - 3'
     take_skip = gets.to_i
     case take_skip
     when 1, 3
       take_skip
     when 2
-      if state != :pass
+      if choice.nil?
         take_skip
       else
         self.show_error 'Not valid'
-        self.player_choice(:pass)      
+        self.player_choice(2)      
       end
     else
       self.show_error 'Not valid choice, try again'
-      self.player_choice(state)
+      self.player_choice(choice)
     end
   end
 
