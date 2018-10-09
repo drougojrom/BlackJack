@@ -12,33 +12,30 @@ class GameController
   DEALER_STOP = 17
   BLACKJACK = 21
 
-  attr_accessor :player, :dealer, :deck
+  attr_accessor :player, :dealer, :deck, :finished
 
   def initialize(player)
     @player = player
     @dealer = Dealer.new 'Dealer'
+    @finished = false
     reset
   end
 
   def start
     loop do
-      display_cards
-      GameInterface.display_total(player.total)
-      choice = GameInterface.player_choice(player_choice)
-      player_turn(choice)
-      case player_choice
-      when :open
+      player_turn
+      if @finished
         result(name, determine_winner)
-      when :pass
+      else
         dealer_turn
-        next
-      when :take_card
-        dealer_turn
-        result(name, determine_winner)
+        if @finished
+          result(name, determine_winner)
+        else
+          player_turn(2)
+          result(name, determine_winner)          
+        end
       end
-      break if player.bank == 0 || dealer.bank == 0
-      GameInterface.players_stats(player, dealer)
-      break unless GameInterface.restart_game?
+      break unless GameInterface.restart_game?      
       reset
     end
   end
@@ -47,10 +44,6 @@ private
 
   def name
     player.name
-  end
-
-  def player_choice
-    player.choice
   end
 
   def display_cards(show = nil)
@@ -62,23 +55,29 @@ private
     GameInterface.display_total(player.total, dealer.total)
   end
 
-  def player_turn(choice)
-    player.update_choice(choice)
-    case player_choice
-    when :take_card
+  def player_turn(choice = nil)
+    display_cards
+    GameInterface.display_total(player.total)    
+    choice = GameInterface.player_choice(choice)
+    case choice
+    when 1
       deck.give_card(player)
       player.calculate_total
       if player.lost?
-        player.update_choice(3)
+        @finished = true
       end
+    when 2
+      return
+    when 3
+      @finished = true
     end
   end
 
   def dealer_turn
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
-      dealer.update_choice(1)
       deck.give_card(dealer)
       dealer.calculate_total
     end
+    @finished = true if dealer.lost? || player.hand.length == 3
   end
 end

@@ -24,19 +24,20 @@ module Round
       dealer.bank -= bank_value
       player.bank += bank_value
     end
+    return if player.bank == 0 || dealer.bank == 0
+    GameInterface.players_stats(player, dealer)
   end
 
   def reset
     dealer.hand = []
     player.hand = []
-    player.update_choice(0)
-    dealer.update_choice(0)
     @deck = Deck.new
     2.times do
       deck.give_card(player)
       deck.give_card(dealer, false)
     end
-    player.total
-    dealer.total
+    player.calculate_total
+    dealer.calculate_total
+    @finished = false
   end
 end
