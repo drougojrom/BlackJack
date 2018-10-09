@@ -36,5 +36,7 @@ module Round
       deck.give_card(player)
       deck.give_card(dealer, false)
     end
+    player.calculate_total
+    dealer.calculate_total
   end
 end

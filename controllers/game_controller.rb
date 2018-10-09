@@ -17,23 +17,30 @@ class GameController
   def initialize(player)
     @player = player
     @dealer = Dealer.new 'Dealer'
+    reset
   end
 
   def start
-    reset
     loop do
       display_cards
-      GameInterface.display_total(player.calculate_total)
+      GameInterface.display_total(player.total)
       choice = GameInterface.player_choice(player_choice)
       player_turn(choice)
-      break if player_choice == :open
-      dealer_turn unless dealer.choice == :card_taken
-      break unless player_choice == :pass
+      case player_choice
+      when :open
+        result(name, determine_winner)
+      when :pass
+        dealer_turn
+        next
+      when :take_card
+        dealer_turn
+        result(name, determine_winner)
+      end
+      break if player.bank == 0 || dealer.bank == 0  
+      GameInterface.players_stats(player, dealer)
+      break unless GameInterface.restart_game?
+      reset
     end
-    result(name, determine_winner)
-    return if player.bank == 0 || dealer.bank == 0  
-    GameInterface.players_stats(player, dealer)
-    start if GameInterface.restart_game?
   end
 
 private
@@ -52,7 +59,7 @@ private
   end
 
   def display_total
-    GameInterface.display_total(player.calculate_total, dealer.calculate_total)
+    GameInterface.display_total(player.total, dealer.total)
   end
 
   def player_turn(choice)
@@ -60,12 +67,10 @@ private
     case player_choice
     when :take_card
       deck.give_card(player)
+      player.calculate_total
       if player.lost?
         player.update_choice(3)
-        return
       end
-    else
-      return
     end
   end
 
@@ -73,6 +78,7 @@ private
     if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
       dealer.update_choice(1)
       deck.give_card(dealer)
+      dealer.calculate_total
     end
   end
 end

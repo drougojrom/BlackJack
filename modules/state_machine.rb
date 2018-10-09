@@ -1,14 +1,9 @@
 module StateMachine
-  def self.included(base)
-    base.send :include, InstanceMethods
-  end
+  attr_accessor :choice
 
-  module InstanceMethods
-    attr_accessor :choice
-    def update_choice(choice)
-      updated_choice = StateMachine::CHOICES[choice]
-      @choice = updated_choice unless updated_choice.nil?
-    end
+  def update_choice(choice)
+    updated_choice = StateMachine::CHOICES[choice]
+    @choice = updated_choice unless updated_choice.nil?
   end
 
 private

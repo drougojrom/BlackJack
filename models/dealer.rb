@@ -3,12 +3,13 @@ require_relative '../modules/state_machine.rb'
 class Dealer
   include StateMachine
 
-  attr_accessor :name, :hand, :bank
+  attr_accessor :name, :hand, :bank, :total
 
   def initialize(name)
     @name = name
     @hand = []
     @bank = 100
+    @total = 0
   end
 
   def calculate_total
@@ -21,7 +22,7 @@ class Dealer
     ace_count.times do
       total -= 10 if total > GameController::BLACKJACK
     end
-    total
+    @total = total
   end
 
   def blackjack?
