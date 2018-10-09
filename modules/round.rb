@@ -1,15 +1,15 @@
 module Round
   def determine_winner
     player_result = nil
-    if player.calculate_total == dealer.calculate_total
+    if player.total == dealer.total
       player_result = nil
     elsif player.blackjack? || dealer.lost?
       player_result = true
     elsif dealer.blackjack? || player.lost?
       player_result = false
-    elsif player.calculate_total > dealer.calculate_total
+    elsif player.total > dealer.total
       player_result = true
-    elsif player.calculate_total < dealer.calculate_total
+    elsif player.total < dealer.total
       player_result = false
     end
     player_result
@@ -36,7 +36,7 @@ module Round
       deck.give_card(player)
       deck.give_card(dealer, false)
     end
-    player.calculate_total
-    dealer.calculate_total
+    player.total
+    dealer.total
   end
 end

@@ -36,7 +36,7 @@ class GameController
         dealer_turn
         result(name, determine_winner)
       end
-      break if player.bank == 0 || dealer.bank == 0  
+      break if player.bank == 0 || dealer.bank == 0
       GameInterface.players_stats(player, dealer)
       break unless GameInterface.restart_game?
       reset
