@@ -33,7 +33,7 @@ class GameInterface
         take_skip
       else
         self.show_error 'Not valid'
-        self.player_choice(2)      
+        self.player_choice(2)
       end
     else
       self.show_error 'Not valid choice, try again'
@@ -50,7 +50,7 @@ class GameInterface
       hand.each do |card|
         puts card.open_card
       end
-    else 
+    else
       puts "Dealer's card: "
       hand.each do |card|
         puts '*'

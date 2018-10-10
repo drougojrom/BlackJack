@@ -24,13 +24,16 @@ class GameController
     loop do
       player_turn
       if @finished
-        result(name, determine_winner)
+        result(determine_winner)
       else
         dealer_turn
-        result(name, determine_winner) if @finished
+        result(determine_winner) if @finished
         player_turn(2) unless @finished
-        result(name, determine_winner)
+        result(determine_winner)
       end
+      GameInterface.display_result(name, determine_winner)
+      GameInterface.players_stats(player, dealer)
+      break if player.bank == 0 || dealer.bank == 0
       break unless GameInterface.restart_game?
       reset
     end
