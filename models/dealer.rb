@@ -1,5 +1,7 @@
 class Dealer
 
+  BLACKJACK = 21
+
   attr_accessor :name, :hand, :bank, :total
 
   def initialize(name)
@@ -17,16 +19,16 @@ class Dealer
       ace_count += 1 if card.value == 11
     end
     ace_count.times do
-      total -= 10 if total > GameController::BLACKJACK
+      total -= 10 if total > BLACKJACK
     end
     @total = total
   end
 
   def blackjack?
-    calculate_total == GameController::BLACKJACK
+    calculate_total == BLACKJACK
   end
 
   def lost?
-    calculate_total > GameController::BLACKJACK
+    calculate_total > BLACKJACK
   end
 end

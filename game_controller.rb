@@ -1,16 +1,15 @@
-require_relative '../models/player.rb'
-require_relative '../models/dealer.rb'
-require_relative '../models/card.rb'
-require_relative '../models/deck.rb'
-require_relative '../views/game_interface.rb'
-require_relative '../modules/round.rb'
+require_relative './models/player.rb'
+require_relative './models/dealer.rb'
+require_relative './models/card.rb'
+require_relative './models/deck.rb'
+require_relative 'game_interface.rb'
+require_relative 'round.rb'
 
 class GameController
 
   include Round
 
   DEALER_STOP = 17
-  BLACKJACK = 21
 
   attr_accessor :player, :dealer, :deck, :finished
 
@@ -28,19 +27,16 @@ class GameController
         result(name, determine_winner)
       else
         dealer_turn
-        if @finished
-          result(name, determine_winner)
-        else
-          player_turn(2)
-          result(name, determine_winner)          
-        end
+        result(name, determine_winner) if @finished
+        player_turn(2) unless @finished
+        result(name, determine_winner)
       end
-      break unless GameInterface.restart_game?      
+      break unless GameInterface.restart_game?
       reset
     end
   end
 
-private
+  private
 
   def name
     player.name
@@ -57,7 +53,7 @@ private
 
   def player_turn(choice = nil)
     display_cards
-    GameInterface.display_total(player.total)    
+    GameInterface.display_total(player.total)
     choice = GameInterface.player_choice(choice)
     case choice
     when 1
