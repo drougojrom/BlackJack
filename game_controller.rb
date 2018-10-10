@@ -7,76 +7,47 @@ require_relative 'round.rb'
 
 class GameController
 
-  include Round
+  attr_accessor :player, :dealer, :round, :interface
 
-  DEALER_STOP = 17
-
-  attr_accessor :player, :dealer, :deck, :finished
-
-  def initialize(player)
+  def initialize(player, dealer, interface)
     @player = player
-    @dealer = Dealer.new 'Dealer'
-    @finished = false
-    reset
+    @dealer = dealer
+    @interface = interface
   end
 
   def start
+    @round = Round.new player, dealer, 20
     loop do
-      player_turn
-      if @finished
-        result(determine_winner)
+      player_cards_total
+      next unless choice = interface.player_choice
+      round.first_turn(choice)
+      if round.finished?
+        open_cards
+        interface.result(round.winner)
       else
-        dealer_turn
-        result(determine_winner) if @finished
-        player_turn(2) unless @finished
-        result(determine_winner)
+        player_cards_total
+        interface.dealer_cards        
+        choice = interface.player_choice(player.skipped)   
+        round.second_turn(choice)
+        open_cards
+        interface.result(round.winner)
       end
-      GameInterface.display_result(name, determine_winner)
-      GameInterface.players_stats(player, dealer)
-      break if player.bank == 0 || dealer.bank == 0
-      break unless GameInterface.restart_game?
-      reset
+      break unless interface.restart_game?
+      round.restart
     end
   end
 
-  private
+private 
 
-  def name
-    player.name
+  def open_cards
+    interface.player_cards
+    interface.dealer_cards(true)
+    interface.total(true)
+    interface.stats
   end
 
-  def display_cards(show = nil)
-    GameInterface.display_cards(player)
-    GameInterface.display_cards(dealer, show)
-  end
-
-  def display_total
-    GameInterface.display_total(player.total, dealer.total)
-  end
-
-  def player_turn(choice = nil)
-    display_cards
-    GameInterface.display_total(player.total)
-    choice = GameInterface.player_choice(choice)
-    case choice
-    when 1
-      deck.give_card(player)
-      player.calculate_total
-      if player.lost?
-        @finished = true
-      end
-    when 2
-      return
-    when 3
-      @finished = true
-    end
-  end
-
-  def dealer_turn
-    if dealer.calculate_total < DEALER_STOP && dealer.hand.length < 3
-      deck.give_card(dealer)
-      dealer.calculate_total
-    end
-    @finished = true if dealer.lost? || player.hand.length == 3
+  def player_cards_total
+    interface.player_cards
+    interface.total(false)
   end
 end
