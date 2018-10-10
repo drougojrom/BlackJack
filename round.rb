@@ -1,4 +1,20 @@
-module Round
+class Round
+
+  attr_reader :player_cards, :dealer_cards
+
+  def initialize(player_cards, dealer_cards)
+    @player_cards = player_cards
+    @dealer_cards = dealer_cards
+  end
+
+  def state
+
+  end
+
+  private
+
+  attr_writer :player_cards, :dealer_cards
+
   def determine_winner
     player_result = nil
     if player.total == dealer.total
