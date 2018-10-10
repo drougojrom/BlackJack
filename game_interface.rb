@@ -1,11 +1,18 @@
 class GameInterface
 
-  def self.players_stats(player, dealer)
+  attr_accessor :player, :dealer
+
+  def initialize(player, dealer)
+    @player = player
+    @dealer = dealer
+  end
+
+  def stats
     puts "#{player.name} has #{player.bank}$"
     puts "Dealer has #{dealer.bank}$"
   end
 
-  def self.restart_game?
+  def restart_game?
     puts 'Do you want to play again? Y - 1; N - 2'
     choice = gets.to_i
     case choice
@@ -14,68 +21,77 @@ class GameInterface
     when 2
       false
     else
-      self.show_error 'not a valid value'
+      show_error 'not a valid value'
+      restart_game?
+    end
+  end
+
+  def player_choice(skipped = false)
+    puts 'Select one of the options'
+    puts 'Take - 1'
+    puts 'Pass - 2' unless skipped
+    puts 'Open - 3'
+    turn = gets.to_i
+    case turn
+    when 1, 3
+      turn
+    when 2
+      unless skipped
+        turn
+      else
+        show_error 'Not valid'
+        nil
+      end
+    else
+      show_error 'Not valid choice, try again'
       nil
     end
   end
 
-  def self.player_choice(choice = nil)
-    puts 'Select one of the options'
-    puts 'Take - 1'
-    puts 'Pass - 2' if choice.nil?
-    puts 'Open - 3'
-    take_skip = gets.to_i
-    case take_skip
-    when 1, 3
-      take_skip
-    when 2
-      if choice.nil?
-        take_skip
-      else
-        self.show_error 'Not valid'
-        self.player_choice(2)
-      end
-    else
-      self.show_error 'Not valid choice, try again'
-      self.player_choice(choice)
-    end
-  end
-
-  def self.display_cards(player, show = nil)
+  def player_cards
     puts ''
     name = player.name
     hand = player.hand
     puts "#{name} has the following cards: "
-    if name != 'Dealer' || show
+    hand.each do |card|
+      puts card.open_card
+    end
+  end
+
+  def dealer_cards(show = false)
+    puts ''
+    hand = dealer.hand
+    puts 'Dealer has the following cards: '
+    if show
       hand.each do |card|
         puts card.open_card
       end
     else
-      puts "Dealer's card: "
       hand.each do |card|
         puts '*'
       end
     end
   end
 
-  def self.display_result(player_name, result = nil)
+  def result(result = nil)
+    name = player.name
     case result
-    when true
-      puts "Nice! I've just lost. You won 10$, #{player_name}!"
-    when false
+    when :player
+      puts "Nice! I've just lost. You won 10$, #{name}!"
+    when :dealer
       puts "Sorry, you've lost your 10$"
     else
       puts "It's a tie!"
     end
   end
 
-  def self.display_total(player_total, dealer_total = nil)
-    puts "Player's total is #{player_total}"
+  def total(show = false)
+    puts "Player's total is #{player.total}"
     puts ''
-    puts "Dealer's total is #{dealer_total}" unless dealer_total.nil?
+    puts "Dealer's total is #{dealer.total}" if show
   end
 
-  def self.show_error(error)
+  def show_error(error)
     puts error
   end
 end
