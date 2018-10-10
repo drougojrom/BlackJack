@@ -1,4 +1,4 @@
-require_relative './controllers/game_controller.rb'
+require_relative './game_controller.rb'
 
 puts "Welcome to Blackjack!"
 puts "I'm going to be the dealer, and my name is Rom."

@@ -15,17 +15,14 @@ module Round
     player_result
   end
 
-  def result(name, win)
+  def result(win)
     display_cards(true)
     display_total
-    GameInterface.display_result(name, win)
     unless win.nil?
       bank_value = win ? 10 : -10
       dealer.bank -= bank_value
       player.bank += bank_value
     end
-    return if player.bank == 0 || dealer.bank == 0
-    GameInterface.players_stats(player, dealer)
   end
 
   def reset
